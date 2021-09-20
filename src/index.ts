@@ -1,11 +1,14 @@
 require('dotenv').config();
+process.on('unhandledRejection', console.error);
+
 import fs from 'fs';
 import { spawnNode } from './process-spawner';
 import { networkInterfaces } from 'os';
 import express, { Application } from 'express';
 import { glob } from 'glob';
-import path from 'path/posix';
+import path from 'path'
 import API from './API';
+
 const app = express()
 // start broadcasting ip:port of the server
 spawnNode('./dist/dnssd-advertise.js');
@@ -48,21 +51,21 @@ function startServer(app: Application) {
 
 function loadAPIs(app: Application): void {
     var c = require('./api/testing.api');
-
     glob("./**/*.api.js", (err, matches) => {
         matches.forEach(m => {
-            let apiClass = require('./' + path.relative(__dirname, m)).default;
+            const modulePath: string = './' + path.relative(__dirname, m);
+            console.log(modulePath);
+            let importedClass = require(modulePath).default;
             // check exports
-            if(apiClass === undefined){
-                throw ``
+            if (importedClass === undefined || !(importedClass.prototype instanceof API)) {
+                throw `ERROR: the module '${modulePath}' doesn't export a class that inherits API class`;
             }
             // check inheritance
-            if(apiClass?.s)
-            console.log('typeof', typeof apiClass);
-            if (apiClass.initialize !== undefined) {
-                apiClass.initialize(app);
+            if (importedClass?.s)
+                console.log('typeof', typeof importedClass);
+            if (importedClass.initialize !== undefined) {
+                importedClass.initialize(app);
             }
-
             console.log(m);
         });
     });

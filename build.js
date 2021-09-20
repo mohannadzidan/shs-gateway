@@ -7,7 +7,10 @@ const ssh = new NodeSSH()
 const watch = new TscWatchClient();
 const glob = require("glob-promise");
 
+let isRemote = true;
+
 watch.on('success', () => {
+    if(!isRemote) return;
     // collect local files
     var localFilesIndex = {};
     var remoteFilesIndex = {};
@@ -61,14 +64,20 @@ watch.on('success', () => {
 
 
 });
-
 console.log("ssh login pi@SHS-gateway...")
 ssh.connect({
     host: 'SHS-gateway',
     username: 'pi',
     password: process.env.SSH_PASS
 }).then(() => {
+    console.log('Login success!, transpiler starting with remote output directory ssh file transfer...');
+    isRemote = true;
     watch.start('--project', '.');
+}).catch(e => {
+    console.log('filed to login! transpiler starting with local output directory...');
+    isRemote = false;
+    watch.start('--project', '.');
+
 });
 
 function diff(src, dest) {

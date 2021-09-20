@@ -9,6 +9,7 @@ process.on('exit', function () {
 });
 function spawn(command: string, args: string[]) {
     const proc = spawnProcess(command, args);
+    console.log('spawned 1 process with pid =', proc.pid);
     children.push(proc);
     proc.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
