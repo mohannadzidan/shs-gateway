@@ -1,6 +1,4 @@
 require('dotenv').config();
-process.on('unhandledRejection', console.error);
-
 import fs from 'fs';
 import { spawnNode } from './process-spawner';
 import { networkInterfaces } from 'os';
@@ -8,6 +6,20 @@ import express, { Application } from 'express';
 import { glob } from 'glob';
 import path from 'path'
 import API from './API';
+const nrf24 = require('nrf24');
+console.log(nrf24);
+
+process.on('unhandledRejection', console.error);
+process.once('SIGUSR2', function () {
+    process.kill(process.pid, 'SIGUSR2');
+});
+
+process.on('SIGINT', function () {
+    // this is only called on ctrl+c, not restart
+    process.kill(process.pid, 'SIGINT');
+});
+
+ 
 
 const app = express()
 // start broadcasting ip:port of the server
