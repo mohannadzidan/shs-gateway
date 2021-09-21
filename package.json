@@ -4,7 +4,7 @@
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "build": "node build.js",
+        "build": "npx tsc-watch",
         "start": "npx nodemon -r source-map-support/register dist/index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "npx nodemon --watch dist dist/index.js --delay 500ms"
@@ -16,7 +16,8 @@
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "glob": "^7.1.7",
-        "nodemon": "^2.0.12"
+        "nodemon": "^2.0.12",
+        "nrf24": "^0.1.7-beta"
     },
     "devDependencies": {
         "@types/express": "^4.17.13",
